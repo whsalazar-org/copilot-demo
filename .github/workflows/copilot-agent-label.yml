@@ -11,5 +11,5 @@ jobs:
     if: contains(github.event.issue.labels.*.name, 'copilot-coding-agent')
     runs-on: ubuntu-latest
     steps:
-      - name: Announce Delegation (example step: replace with your agent action)
+      - name: Announce Delegation
         run: echo "Delegating issue #${{ github.event.issue.number }} to Coding Agent!"
