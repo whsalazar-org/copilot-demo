@@ -1,0 +1,24 @@
+# Node dependencies
+node_modules/
+
+# TypeScript build output
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Env files
+.env
+
+# VS Code settings
+.vscode/
+
+# Coverage (if added later)
+coverage/
+
+# OS files
+.DS_Store
