@@ -12,4 +12,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Announce Delegation
-        run: echo "Delegating issue #${{ github.event.issue.number }} to Coding Agent!"
+        run: echo "Delegating issue" #${{ github.event.issue.number }}
