@@ -1,0 +1,15 @@
+name: Copilot Coding Agent Label Monitor
+
+on:
+  issues:
+    types:
+      - opened
+      - labeled
+
+jobs:
+  call-coding-agent:
+    if: contains(github.event.issue.labels.*.name, 'copilot-coding-agent')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Announce Delegation (example step: replace with your agent action)
+        run: echo "Delegating issue #${{ github.event.issue.number }} to Coding Agent!"
