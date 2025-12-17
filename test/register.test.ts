@@ -6,6 +6,7 @@ import { database } from '../src/database';
 
 describe('POST /api/register', () => {
     const app = express();
+    // eslint-disable-next-line import/no-named-as-default-member
     app.use(express.json());
     setRoutes(app);
 
