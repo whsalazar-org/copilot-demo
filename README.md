@@ -1,5 +1,10 @@
 # Math Web Application
 
+
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/whsalazar-org/copilot-demo/actions)
+
+----
+
 This is a simple Node.js Express application named "math-web" that provides an endpoint to add two numbers. The application is structured to separate concerns, with the math logic and routing handled in different files.
 
 ## Project Structure
