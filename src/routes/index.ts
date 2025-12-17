@@ -1,4 +1,5 @@
 import { Request, Response, Express } from 'express';
+import * as bcrypt from 'bcrypt';
 import { addNumbers } from '../math';
 import { database } from '../database';
 import { RegisterRequest, User } from '../types/user';
@@ -19,6 +20,9 @@ export function factorial(n: number): number {
     }
     return factorialHelper(n);
 }
+
+// Email validation regex
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function setRoutes(app: Express) {
     app.get('/add', (req: Request, res: Response) => {
@@ -52,7 +56,7 @@ export function setRoutes(app: Express) {
         }
     });
 
-    app.post('/api/register', (req: Request, res: Response) => {
+    app.post('/api/register', async (req: Request, res: Response) => {
         const { username, email, password }: RegisterRequest = req.body;
 
         // Validate required fields
@@ -61,8 +65,7 @@ export function setRoutes(app: Express) {
         }
 
         // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        if (!EMAIL_REGEX.test(email)) {
             return res.status(400).json({ error: 'Invalid email format.' });
         }
 
@@ -85,12 +88,15 @@ export function setRoutes(app: Express) {
             return res.status(409).json({ error: 'User with this username already exists.' });
         }
 
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         // Create new user
         const newUser: User = {
-            id: Math.random().toString(36).substr(2, 9),
+            id: Math.random().toString(36).substring(2, 11),
             username,
             email,
-            password,
+            password: hashedPassword,
             createdAt: new Date()
         };
 
