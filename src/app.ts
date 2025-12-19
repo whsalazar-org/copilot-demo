@@ -13,8 +13,7 @@ const addRouteLimiter = rateLimit({
 });
 
 app.use(express.json());
-
-
+app.use(addRouteLimiter);
 setRoutes(app);
 
 const connection = mysql.createConnection({
