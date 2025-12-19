@@ -2,9 +2,15 @@ import express from 'express';
 import { setRoutes } from './routes/index';
 import { logger } from './logger';
 import mysql from 'mysql';
+import rateLimit from 'express-rate-limit';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const addRouteLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs for this route
+});
 
 app.use(express.json());
 
@@ -20,7 +26,7 @@ const connection = mysql.createConnection({
 
 connection.connect();
 
-app.get('/add', (req, res) => {
+app.get('/add', addRouteLimiter, (req, res) => {
   const num1 = req.query.num1;
   const num2 = req.query.num2;
 
