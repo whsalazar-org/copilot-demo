@@ -2,13 +2,18 @@ import express from 'express';
 import { setRoutes } from './routes/index';
 import { logger } from './logger';
 import mysql from 'mysql';
+import rateLimit from 'express-rate-limit';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const addRouteLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs for this route
+});
+
 app.use(express.json());
-
-
+app.use(addRouteLimiter);
 setRoutes(app);
 
 const connection = mysql.createConnection({
@@ -23,6 +28,9 @@ connection.connect();
 app.get('/add', (req, res) => {
   const num1Raw = req.query.num1;
   const num2Raw = req.query.num2;
+app.get('/add', addRouteLimiter, (req, res) => {
+  const num1 = req.query.num1;
+  const num2 = req.query.num2;
 
   // Normalize query parameters to single strings (handle string | string[] | undefined)
   const num1Str = Array.isArray(num1Raw) ? num1Raw[0] : num1Raw;
