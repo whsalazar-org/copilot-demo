@@ -28,9 +28,7 @@ connection.connect();
 app.get('/add', (req, res) => {
   const num1Raw = req.query.num1;
   const num2Raw = req.query.num2;
-app.get('/add', addRouteLimiter, (req, res) => {
-  const num1 = req.query.num1;
-  const num2 = req.query.num2;
+
 
   // Normalize query parameters to single strings (handle string | string[] | undefined)
   const num1Str = Array.isArray(num1Raw) ? num1Raw[0] : num1Raw;
