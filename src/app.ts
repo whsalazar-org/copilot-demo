@@ -21,13 +21,21 @@ const connection = mysql.createConnection({
 connection.connect();
 
 app.get('/add', (req, res) => {
-  const num1 = req.query.num1;
-  const num2 = req.query.num2;
+  const num1Raw = req.query.num1;
+  const num2Raw = req.query.num2;
 
-  // 🚩 Vulnerable: SQL Injection Example
-  const query = `SELECT ${num1} + ${num2} AS result`;
+  // Validate that the inputs are numeric
+  const num1 = Number(num1Raw);
+  const num2 = Number(num2Raw);
 
-  connection.query(query, (err, result) => {
+  if (Number.isNaN(num1) || Number.isNaN(num2)) {
+    return res.status(400).json({ error: 'Invalid numeric parameters' });
+  }
+
+  // Use a parameterized query to prevent SQL injection
+  const query = 'SELECT ? + ? AS result';
+
+  connection.query(query, [num1, num2], (err, result) => {
     if (err) {
       res.status(500).json({ error: 'Database error' });
     } else {
