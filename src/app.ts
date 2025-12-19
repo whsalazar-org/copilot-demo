@@ -25,14 +25,36 @@ const connection = mysql.createConnection({
 
 connection.connect();
 
-app.get('/add', addRouteLimiter, (req, res) => {
-  const num1 = req.query.num1;
-  const num2 = req.query.num2;
+app.get('/add', (req, res) => {
+  const num1Raw = req.query.num1;
+  const num2Raw = req.query.num2;
 
-  // 🚩 Vulnerable: SQL Injection Example
-  const query = `SELECT ${num1} + ${num2} AS result`;
 
-  connection.query(query, (err, result) => {
+  // Normalize query parameters to single strings (handle string | string[] | undefined)
+  const num1Str = Array.isArray(num1Raw) ? num1Raw[0] : num1Raw;
+  const num2Str = Array.isArray(num2Raw) ? num2Raw[0] : num2Raw;
+
+  // Validate that the inputs are present and non-empty strings
+  if (
+    typeof num1Str !== 'string' ||
+    typeof num2Str !== 'string' ||
+    num1Str.trim() === '' ||
+    num2Str.trim() === ''
+  ) {
+    return res.status(400).json({ error: 'Invalid numeric parameters' });
+  }
+
+  // Parse as floating-point numbers and validate
+  const num1 = parseFloat(num1Str);
+  const num2 = parseFloat(num2Str);
+  if (Number.isNaN(num1) || Number.isNaN(num2)) {
+    return res.status(400).json({ error: 'Invalid numeric parameters' });
+  }
+
+  // Use a parameterized query to prevent SQL injection
+  const query = 'SELECT ? + ? AS result';
+
+  connection.query(query, [num1, num2], (err, result) => {
     if (err) {
       res.status(500).json({ error: 'Database error' });
     } else {
