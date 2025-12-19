@@ -24,10 +24,23 @@ app.get('/add', (req, res) => {
   const num1Raw = req.query.num1;
   const num2Raw = req.query.num2;
 
-  // Validate that the inputs are numeric
-  const num1 = Number(num1Raw);
-  const num2 = Number(num2Raw);
+  // Normalize query parameters to single strings (handle string | string[] | undefined)
+  const num1Str = Array.isArray(num1Raw) ? num1Raw[0] : num1Raw;
+  const num2Str = Array.isArray(num2Raw) ? num2Raw[0] : num2Raw;
 
+  // Validate that the inputs are present and non-empty strings
+  if (
+    typeof num1Str !== 'string' ||
+    typeof num2Str !== 'string' ||
+    num1Str.trim() === '' ||
+    num2Str.trim() === ''
+  ) {
+    return res.status(400).json({ error: 'Invalid numeric parameters' });
+  }
+
+  // Parse as floating-point numbers and validate
+  const num1 = parseFloat(num1Str);
+  const num2 = parseFloat(num2Str);
   if (Number.isNaN(num1) || Number.isNaN(num2)) {
     return res.status(400).json({ error: 'Invalid numeric parameters' });
   }
